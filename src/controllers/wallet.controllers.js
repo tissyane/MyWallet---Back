@@ -4,13 +4,8 @@ import dayjs from "dayjs";
 async function createIncomeTransaction(req, res) {
   const { value, description } = req.body;
   const session = res.locals.session;
-  // const token = req.headers.authorization?.replace("Bearer ", "");
 
   try {
-    // const session = await db.collection("sessions").findOne({ token });
-    // if (!session) {
-    //   res.sendStatus(401);
-    // }
     const user = await db.collection("users").findOne({ _id: session.userId });
 
     if (user) {
@@ -34,13 +29,8 @@ async function createIncomeTransaction(req, res) {
 async function createExpenseTransaction(req, res) {
   const { value, description } = req.body;
   const session = res.locals.session;
-  // const token = req.headers.authorization?.replace("Bearer ", "");
 
   try {
-    // const session = await db.collection("sessions").findOne({ token });
-    // if (!session) {
-    //   res.sendStatus(401);
-    // }
     const user = await db.collection("users").findOne({ _id: session.userId });
 
     if (user) {
@@ -63,16 +53,8 @@ async function createExpenseTransaction(req, res) {
 
 async function showTransactions(req, res) {
   const session = res.locals.session;
-  // const token = req.headers.authorization?.replace("Bearer ", "");
 
   try {
-    // const session = await db.collection("sessions").findOne({ token });
-
-    // if (!session) {
-    //   res.sendStatus(401);
-    //   return;
-    // }
-
     const transactions = await db
       .collection("transactions")
       .find({ userId: session.userId })
