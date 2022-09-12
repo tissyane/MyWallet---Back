@@ -7,7 +7,10 @@ import {
   createSession,
   deleteSession,
 } from "./src/controllers/auth.controllers.js";
-import { createTransaction } from "./src/controllers/wallet.controllers.js";
+import {
+  createTransaction,
+  showTransactions,
+} from "./src/controllers/wallet.controllers.js";
 
 const app = express();
 app.use(cors());
@@ -22,5 +25,7 @@ app.post("/sign-in", createSession);
 app.delete("/sign-out", deleteSession);
 
 app.post("/transactions", createTransaction);
+
+app.get("/transactions", showTransactions);
 
 app.listen(port, () => console.log("Listening on port 5000!"));

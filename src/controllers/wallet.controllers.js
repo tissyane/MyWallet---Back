@@ -24,7 +24,8 @@ async function createTransaction(req, res) {
     const user = await db.collection("users").findOne({ _id: session.userId });
 
     if (user) {
-      await db.collection("transactions").insertOne({
+      const { insertedId } = await db.collection("transactions").insertOne({
+        userId: session.userId,
         data: dayjs(Date.now()).format("DD/MM"),
         value,
         description,
@@ -32,7 +33,7 @@ async function createTransaction(req, res) {
       });
     }
 
-    res.sendStatus();
+    res.sendStatus(201);
   } catch (err) {
     console.log(err.message);
     res.status(500).send(err);
@@ -40,4 +41,27 @@ async function createTransaction(req, res) {
   }
 }
 
-export { createTransaction };
+async function showTransactions(req, res) {
+  const token = req.headers.authorization?.replace("Bearer ", "");
+
+  try {
+    const session = await db.collection("sessions").findOne({ token });
+
+    if (!session) {
+      res.sendStatus(401);
+      return;
+    }
+
+    const transactions = await db
+      .collection("transactions")
+      .find({ userId: session.userId })
+      .toArray();
+
+    res.send(transactions);
+  } catch (err) {
+    res.status(500).send(err);
+    return;
+  }
+}
+
+export { createTransaction, showTransactions };
