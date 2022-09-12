@@ -1,5 +1,5 @@
 import db from "../database/db.js";
-import userSchema from "../utils/Schema.js";
+import userSchema from "../utils/auth.schema.js";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 
@@ -9,8 +9,10 @@ async function createUser(req, res) {
   const validation = userSchema.validate(req.body, { abortEarly: false });
 
   if (validation.error) {
-    const loginError = validation.error.details[0].message;
-    return res.status(422).send(loginError);
+    const signUpError = validation.error.details.map(
+      (detail) => detail.message
+    );
+    return res.status(422).send(signUpError);
   }
 
   const passwordHash = bcrypt.hashSync(user.password, 10);
@@ -65,14 +67,13 @@ async function deleteSession(req, res) {
     const session = await db.collection("sessions").findOne({ token });
 
     if (!session) {
-      //  TODO:Mudar pra 401
-      return res.sendStatus(409);
+      return res.sendStatus(401);
     }
 
     await db.collection("sessions").deleteOne({
       token,
     });
-    console.log("Deletado");
+
     return res.sendStatus(200);
   } catch (err) {
     res.status(500).send(err);
