@@ -1,6 +1,5 @@
 import db from "../database/db.js";
 import walletSchema from "../utils/wallet.schema.js";
-import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
 
 async function createTransaction(req, res) {
@@ -26,7 +25,7 @@ async function createTransaction(req, res) {
     if (user) {
       const { insertedId } = await db.collection("transactions").insertOne({
         userId: session.userId,
-        data: dayjs(Date.now()).format("DD/MM"),
+        date: dayjs(Date.now()).format("DD/MM"),
         value,
         description,
         type,

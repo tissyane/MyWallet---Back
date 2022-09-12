@@ -45,7 +45,7 @@ async function createSession(req, res) {
         token,
       });
 
-      return res.status(200).send({ token });
+      return res.status(200).send({ token, name: user.name });
     } else {
       return res.sendStatus(401);
     }
