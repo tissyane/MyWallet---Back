@@ -2,8 +2,8 @@ import db from "../database/db.js";
 import walletSchema from "../utils/wallet.schema.js";
 import dayjs from "dayjs";
 
-async function createTransaction(req, res) {
-  const { value, description, type } = req.body;
+async function createIncomeTransaction(req, res) {
+  const { value, description } = req.body;
   const token = req.headers.authorization?.replace("Bearer ", "");
 
   const validation = walletSchema.validate(req.body, { abortEarly: false });
@@ -26,9 +26,47 @@ async function createTransaction(req, res) {
       const { insertedId } = await db.collection("transactions").insertOne({
         userId: session.userId,
         date: dayjs(Date.now()).format("DD/MM"),
-        value,
+        value: Number(value),
         description,
-        type,
+        typeSetting: "income",
+      });
+    }
+
+    res.sendStatus(201);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send(err);
+    return;
+  }
+}
+
+async function createExpenseTransaction(req, res) {
+  const { value, description } = req.body;
+  const token = req.headers.authorization?.replace("Bearer ", "");
+
+  const validation = walletSchema.validate(req.body, { abortEarly: false });
+
+  if (validation.error) {
+    const walletError = validation.error.details.map(
+      (detail) => detail.message
+    );
+    return res.status(422).send(walletError);
+  }
+
+  try {
+    const session = await db.collection("sessions").findOne({ token });
+    if (!session) {
+      res.sendStatus(401);
+    }
+    const user = await db.collection("users").findOne({ _id: session.userId });
+
+    if (user) {
+      const { insertedId } = await db.collection("transactions").insertOne({
+        userId: session.userId,
+        date: dayjs(Date.now()).format("DD/MM"),
+        value: Number(value),
+        description,
+        typeSetting: "expense",
       });
     }
 
@@ -63,4 +101,4 @@ async function showTransactions(req, res) {
   }
 }
 
-export { createTransaction, showTransactions };
+export { createIncomeTransaction, createExpenseTransaction, showTransactions };

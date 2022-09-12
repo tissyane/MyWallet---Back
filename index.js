@@ -7,7 +7,8 @@ import {
   deleteSession,
 } from "./src/controllers/auth.controllers.js";
 import {
-  createTransaction,
+  createIncomeTransaction,
+  createExpenseTransaction,
   showTransactions,
 } from "./src/controllers/wallet.controllers.js";
 
@@ -23,7 +24,9 @@ app.post("/sign-in", createSession);
 
 app.delete("/sign-out", deleteSession);
 
-app.post("/transactions", createTransaction);
+app.post("/transactions/income", createIncomeTransaction);
+
+app.post("/transactions/expense", createExpenseTransaction);
 
 app.get("/transactions", showTransactions);
 
