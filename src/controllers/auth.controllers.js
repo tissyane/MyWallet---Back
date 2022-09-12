@@ -1,19 +1,9 @@
 import db from "../database/db.js";
-import { signUpSchema, signInSchema } from "../utils/auth.schema.js";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 
 async function createUser(req, res) {
   const user = req.body;
-
-  const validation = signUpSchema.validate(req.body, { abortEarly: false });
-
-  if (validation.error) {
-    const signUpError = validation.error.details.map(
-      (detail) => detail.message
-    );
-    return res.status(422).send(signUpError);
-  }
 
   const passwordHash = bcrypt.hashSync(user.password, 10);
 
@@ -33,15 +23,6 @@ async function createUser(req, res) {
 
 async function createSession(req, res) {
   const { email, password } = req.body;
-
-  const validation = signInSchema.validate(req.body, { abortEarly: false });
-
-  if (validation.error) {
-    const signInError = validation.error.details.map(
-      (detail) => detail.message
-    );
-    return res.status(422).send(signInError);
-  }
 
   try {
     const user = await db.collection("users").findOne({ email });

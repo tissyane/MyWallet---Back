@@ -1,25 +1,16 @@
 import db from "../database/db.js";
-import walletSchema from "../utils/wallet.schema.js";
 import dayjs from "dayjs";
 
 async function createIncomeTransaction(req, res) {
   const { value, description } = req.body;
-  const token = req.headers.authorization?.replace("Bearer ", "");
-
-  const validation = walletSchema.validate(req.body, { abortEarly: false });
-
-  if (validation.error) {
-    const walletError = validation.error.details.map(
-      (detail) => detail.message
-    );
-    return res.status(422).send(walletError);
-  }
+  const session = res.locals.session;
+  // const token = req.headers.authorization?.replace("Bearer ", "");
 
   try {
-    const session = await db.collection("sessions").findOne({ token });
-    if (!session) {
-      res.sendStatus(401);
-    }
+    // const session = await db.collection("sessions").findOne({ token });
+    // if (!session) {
+    //   res.sendStatus(401);
+    // }
     const user = await db.collection("users").findOne({ _id: session.userId });
 
     if (user) {
@@ -42,22 +33,14 @@ async function createIncomeTransaction(req, res) {
 
 async function createExpenseTransaction(req, res) {
   const { value, description } = req.body;
-  const token = req.headers.authorization?.replace("Bearer ", "");
-
-  const validation = walletSchema.validate(req.body, { abortEarly: false });
-
-  if (validation.error) {
-    const walletError = validation.error.details.map(
-      (detail) => detail.message
-    );
-    return res.status(422).send(walletError);
-  }
+  const session = res.locals.session;
+  // const token = req.headers.authorization?.replace("Bearer ", "");
 
   try {
-    const session = await db.collection("sessions").findOne({ token });
-    if (!session) {
-      res.sendStatus(401);
-    }
+    // const session = await db.collection("sessions").findOne({ token });
+    // if (!session) {
+    //   res.sendStatus(401);
+    // }
     const user = await db.collection("users").findOne({ _id: session.userId });
 
     if (user) {
@@ -79,15 +62,16 @@ async function createExpenseTransaction(req, res) {
 }
 
 async function showTransactions(req, res) {
-  const token = req.headers.authorization?.replace("Bearer ", "");
+  const session = res.locals.session;
+  // const token = req.headers.authorization?.replace("Bearer ", "");
 
   try {
-    const session = await db.collection("sessions").findOne({ token });
+    // const session = await db.collection("sessions").findOne({ token });
 
-    if (!session) {
-      res.sendStatus(401);
-      return;
-    }
+    // if (!session) {
+    //   res.sendStatus(401);
+    //   return;
+    // }
 
     const transactions = await db
       .collection("transactions")

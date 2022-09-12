@@ -1,5 +1,9 @@
 import express from "express";
 import {
+  validateSignUp,
+  validateSignin,
+} from "../middlewares/auth.middleware.js";
+import {
   createUser,
   createSession,
   deleteSession,
@@ -7,9 +11,9 @@ import {
 
 const router = express.Router();
 
-router.post("/sign-up", createUser);
+router.post("/sign-in", validateSignin, createSession);
 
-router.post("/sign-in", createSession);
+router.post("/sign-up", validateSignUp, createUser);
 
 router.delete("/sign-out", deleteSession);
 
